@@ -30,6 +30,6 @@ def solution(arr: List[int]) -> List[int]:
   return arr
 
 num = int(input())
-arr = [int(x) for x in sys.stdin.readline().rstrip().split(" ")]
+arr = map(int, sys.stdin.readline().rstrip().split())
 
-print(" ".join(map(str, solution(arr))))
+print(*solution(arr))
