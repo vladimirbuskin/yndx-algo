@@ -1,1 +1,5 @@
-.vscode
+*.mov
+video
+*.zip
+__pycache__
+launch.json
