@@ -6,7 +6,7 @@ def solution(node, toFindValue):
   while node != None:
     if node.value == toFindValue:
       return i
-    node = node.next_item;
+    node = node.next;
     i += 1
 
   return -1
