@@ -7,8 +7,8 @@ class StackMaxEff:
     # when empty add always
     if len(self.maxStack) == 0:
       self.maxStack.append(value)
-    # otherwise add only bigger element
-    elif self.maxStack[-1] >= value:
+    # otherwise add only bigger or equal element
+    elif value >= self.maxStack[-1]:
       self.maxStack.append(value)
     self.data.append(value)
 

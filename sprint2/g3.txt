@@ -1,0 +1,24 @@
+23
+push 4
+push -5
+push 7
+push 8
+push 3
+push 8
+push 2
+get_max
+pop
+get_max
+pop
+get_max
+pop
+get_max
+pop
+get_max
+pop
+get_max
+pop
+get_max
+pop
+get_max
+pop
