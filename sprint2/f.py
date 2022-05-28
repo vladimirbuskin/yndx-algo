@@ -1,43 +1,30 @@
-from node import Node
-# from node import DoubleConnectedNode
-
 class StackMax:
   def __init__(self):
-    data = []
-    sorted = []
-    max = None
+    self.data = []
 
   def push(self, value):
     self.data.append(value)
 
   def pop(self):
-    return self.data.pop()
+    if (len(self.data) > 0):
+      return self.data.pop()
+    return "error"
 
-  def get_max():
-    return None
+  def get_max(self):
+    if len(self.data) == 0:
+      return None
+    return max(self.data)
 
+stack = StackMax()
 
-#def solution(node: DoubleConnectedNode) -> DoubleConnectedNode:
-def solution(node, index, value):
-  head = node
-  newNode = Node(value)
-
-  if index == 0:
-    newNode.next = node
-    return newNode
-
-  while index-1:
-    node = node.next
-    index -= 1
-
-  saved = node.next
-  node.next = newNode
-  newNode.next = saved
-
-  return head
-
-'''
-[1] => [2] => [3]
-       [N]
-i = 1
-'''
+# process input
+num = int(input())
+for i in range(num):
+  ar = input().split()
+  if ar[0] == "push":
+    stack.push(int(ar[1]))
+  if ar[0] == "pop":
+    if stack.pop() == "error":
+      print("error")
+  if ar[0] == "get_max":
+    print(stack.get_max())

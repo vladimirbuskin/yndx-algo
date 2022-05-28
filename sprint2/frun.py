@@ -12,7 +12,7 @@ def test():
   head = n1
   listPrint(head)
 
-  head = solution(head, 1, "NEW")
+  head = solution(head, 3, "NEW")
   listPrint(head)
 
 
