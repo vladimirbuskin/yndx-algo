@@ -1,0 +1,36 @@
+34
+1000
+push_front -201
+push_back 959
+push_back 102
+push_front 20
+pop_front
+pop_back
+pop_front
+pop_back
+push_front -201
+push_back 959
+push_back 102
+push_front 20
+pop_front
+pop_back
+pop_front
+pop_back
+push_front -201
+push_back 959
+push_back 102
+push_front 20
+pop_front
+pop_back
+pop_front
+pop_back
+push_front -201
+push_front 666
+push_back 959
+push_back 102
+push_front 20
+pop_front
+pop_back
+pop_front
+pop_back
+pop_back
