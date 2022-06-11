@@ -9,7 +9,7 @@ ahbgdcu
 
 def solution(s1: str, s2: str) -> bool:
   if len(s1)==0:
-    return False
+    return True
   l1 = len(s1)
   k = 0
   for i in range(len(s2)):
