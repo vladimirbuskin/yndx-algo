@@ -1,30 +1,33 @@
-from filecmp import cmp
 import sys
 import functools
 from typing import List
 
-def less(a,b):
-  ca = 0
-  cb = 0
-  for i in range(max(len(a),len(b))):
-    # take char by char if equal continue
-    if i<len(a):
-      ca = int(a[i])
-    if i<len(b):
-      cb = int(b[i])
+def less3(a, b):
+  ar = []
+  for i in range(5):
+    ca = a[i%len(a)]
+    cb = b[i%len(b)]
+    if ca > cb:
+      return 1
     if ca < cb:
       return -1
-    elif ca > cb:
-      return 1
+  
   return 0
 
-def keyGen(a):
-  return a.ljust(4,a[-1])
+def key(a):
+  ar = []
+  for i in range(5):
+    ar.append(a[i % len(a)])
+  return "".join(ar)
 
 def solution(ar: List[str]) -> List[str]:
-  ar.sort(reverse=True, key=keyGen)
+  ar.sort(reverse=True, key=functools.cmp_to_key(less3))
+  #ar.sort(reverse=True, key=key)
   return ar
-  
+
 n = int(input())
 ar = sys.stdin.readline().split()
 print("".join(solution(ar)))
+
+# 997987986984980945941920909891887871856855851845838820797792751745738715703700692681677674657641636633614611606602597587575715715625515225145014747146946245645344644442428413393743633433432832307304295292260235222222112051961811771701691671481461451351341201191131000100010001000100010001000100010001000
+# 997987986984980945941920909891887871856855851845838820797792751745738715703700692681677674657641636633614611606602597587575715715625515225145014747146946245645344644442428413393743633433432832307304295292260235222222112051961811771701691671481461451351341201191131000100010001000100010001000100010001000
