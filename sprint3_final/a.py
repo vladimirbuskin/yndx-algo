@@ -54,17 +54,23 @@ sm = (m + shift) % len(nums)
 
 Само решение функция broken_search делится на два вызова, вначале находим сдвиг, затем делаем бинарный поиск с переданным значением сдвига.
 
+-- ========== UPDATES =========== --
+я оставил обе реализации на память, преобразовать рекурсивный метод в итеративный действительно оказалось не сложно для данного варианта, я полагаю
+помогла теория, глубокое понимание базового случая рекурсии и тела рекурсии. 
+Где условие базового случая рекурсии перешло в условие цикла.
+Но не сложно потому как присутствует лишь один рекурсивный вызов, в алгоритмаз с несколькими вызовами пришлось бы по видимому использовать стэк
+что имело бы ту же самую пространственную сложность как и рекурсивный метод, но рекурсивный короче и понятней.
+
 -- ВРЕМЕННАЯ СЛОЖНОСТЬ --
-временная сложность каждой функции find_shift и bisect_left является log(N). так как глубина дерева из N элементов является Log(N)
+временная сложность каждой функции find_shift и bisect_left является log(N). так как каждый раз половина массива отбрасывается.
 итого log(N) + Log(N) => 2Log(N) => Log(N) так как константы отбрасываются.
 
 -- ПРОСТРАНСТВЕННАЯ СЛОЖНОСТЬ --
-дополнительная пространственная сложность каждой функции является log(N) для сохранения рекурсивных вызовов.
-кроме стэка рекурсии затраты на память O(1). поэтому итоговая дополнительная пространственная сложность алгоритма
-Log(N), суммарная же пространственная сложность вместе с самим массивом O(N + Log(N)) => O(N)
+после того как я убрал рекурсию дополнительная пространственная сложность работы каждой функции составляет O(1).
+Суммарная пространственная сложность вместе с самим массивом O(N) + O(1) => O(N)
 '''
 
-def find_shift(ar, l, r):
+def find_shift_recursive(ar, l, r):
   if r - l <= 1:
     return (l + 1) % len(ar)
   m = l + (r-l) // 2
@@ -73,7 +79,16 @@ def find_shift(ar, l, r):
   else:
     return find_shift(ar, m, r)
 
-def bisect_left(nums, l, r, target, shift):
+def find_shift_iterative(ar, l, r):
+  while r - l <= 1:
+    m = l + (r-l) // 2
+    if ar[l] > ar[m]:
+      r = m
+    else:
+      l = m
+  return (l + 1) % len(ar)
+
+def bisect_left_recursive(nums, l, r, target, shift):
   sl = (l + shift) % len(nums)
 
   if r - l <= 1:
@@ -90,14 +105,38 @@ def bisect_left(nums, l, r, target, shift):
     return sm
   # [l, m)
   elif target < nums[sm]:
-    return bisect_left(nums, l, m, target, shift)
+    return bisect_left_recursive(nums, l, m, target, shift)
   # [m, r)
   else:
-    return bisect_left(nums, m + 1, r, target, shift)
+    return bisect_left_recursive(nums, m + 1, r, target, shift)
+
+def bisect_left_iterative(nums, l, r, target, shift):
+  # body of recursion
+  while not r - l <= 1:
+    sl = (l + shift) % len(nums)
+    m = (l + r) // 2
+    sm = (m + shift) % len(nums)
+
+    # found
+    if target == nums[sm]:
+      return sm
+    # [l, m)
+    elif target < nums[sm]:
+      r = m
+    # [m, r)
+    else:
+      l = m + 1
+
+    # after
+    if r - l <= 1:
+      if nums[sl] == target:
+        return sl
+      else:
+        return -1
 
 def broken_search(nums, target) -> int:
-  shift = find_shift(nums, 0, len(nums))
-  return bisect_left(nums, 0, len(nums), target, shift)
+  shift = find_shift_iterative(nums, 0, len(nums))
+  return bisect_left_iterative(nums, 0, len(nums), target, shift)
 
 # def test():
 #     arr = [19, 21, 100, 101, 1, 4, 5, 7, 12]
