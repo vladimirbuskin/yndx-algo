@@ -1,4 +1,5 @@
-# посылка 68933537
+# посылка рекурсивная 68933537
+# посылка итеративная 68967380
 import sys
 
 '''
@@ -80,7 +81,7 @@ def find_shift_recursive(ar, l, r):
     return find_shift(ar, m, r)
 
 def find_shift_iterative(ar, l, r):
-  while r - l <= 1:
+  while not r - l <= 1:
     m = l + (r-l) // 2
     if ar[l] > ar[m]:
       r = m
@@ -127,12 +128,13 @@ def bisect_left_iterative(nums, l, r, target, shift):
     else:
       l = m + 1
 
-    # after
-    if r - l <= 1:
-      if nums[sl] == target:
-        return sl
-      else:
-        return -1
+  # after
+  if r - l <= 1:
+    sl = (l + shift) % len(nums)
+    if nums[sl] == target:
+      return sl
+    else:
+      return -1
 
 def broken_search(nums, target) -> int:
   shift = find_shift_iterative(nums, 0, len(nums))
