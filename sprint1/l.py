@@ -3,7 +3,6 @@ from typing import List
 
 '''
 == ALGO
-
 '''
 
 def solution(str1, str2):
