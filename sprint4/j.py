@@ -1,11 +1,3 @@
-# 1 2 2 3 4 5 5 5
-import random
-
-
-
-A = 10
-# ar = [1,4,6,5,9]
-ar2 = [1,2,4,6,0,5,9]
 
 def findPairs(x, A):
   history = set()
@@ -32,37 +24,54 @@ def find3th(x, A):
     history.add(x[i])
   return triples
 
+'''
+#8
+
+2 3 2 4 1 10 3 0
+
+10
+
+'''
+
 def find4th(x, A):
-  history = set()
   n = len(x)
   x.sort()
-  triples = set()
-  for i in range(n):
+  res = set()
+  history = {}
+  for i in range(n-1):
     for j in range(i+1,n):
-      for k in range(j+1,n):
-        target = A - x[i] - x[j] - x[k]
-        if target in history:
-          triples.add((target, x[i], x[j], x[k]))
-    history.add(x[i])
-  return triples
+      # 3 = 5 - 1 - 1
+      sum = x[i] + x[j]
+      target = A - sum
+      if target in history:
+        #print("HIST",history)
+        for v in history[target]:
+          tup = tuple(sorted((v[0],v[1],x[i],x[j])))
+          #print('OUT',tup)
+          res.add(tup)
 
-#print(findPairs(ar2, A))
+    # add pairs we saw already
+    for k in range(i):
+      sum = x[k] + x[i]
+      if history.get(sum) == None: history[sum] = set()
+      history[sum].add((x[k], x[i]))
 
-#[1 2 3 4 5 6 7 8]
+  return sorted(res)
+  #return res
 
-# def prepFile():
-#   lines = []
-#   f1 = open("j.txt", "a")
-#   for i in range(1000):
-#     lines.append(random.randint(0,10000))
-#   lines.sort()
-#   lines = map(lambda x: str(x)+"\n", lines)
-#   f1.writelines(lines)
-#   f1.close()
-#prepFile()
 
-numbers = []
+# n = int(input())
+# A = int(input())
+# numbers = [int(x) for x in input().split()]
+
+A = 10000
+numbers=[]
 for i in range(1000):
   numbers.append(int(input()))
 
-print(find4th(numbers, 500))
+res = find4th(numbers, A)
+print(len(res))
+for r in res:
+  #print(" ".join(map(str,r)))
+  #print(*r)
+  pass
