@@ -14,6 +14,7 @@ def less3(a, b):
   
   return 0
 
+# константин жмурко
 def key(a):
   ar = []
   for i in range(5):

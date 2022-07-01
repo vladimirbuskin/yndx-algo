@@ -29,6 +29,10 @@ def find3th(x, A):
 
 2 3 2 4 1 10 3 0
 
+0 1 2 2 3
+
+
+
 10
 
 '''
@@ -40,14 +44,11 @@ def find4th(x, A):
   history = {}
   for i in range(n-1):
     for j in range(i+1,n):
-      # 3 = 5 - 1 - 1
       sum = x[i] + x[j]
       target = A - sum
       if target in history:
-        #print("HIST",history)
         for v in history[target]:
           tup = tuple(sorted((v[0],v[1],x[i],x[j])))
-          #print('OUT',tup)
           res.add(tup)
 
     # add pairs we saw already

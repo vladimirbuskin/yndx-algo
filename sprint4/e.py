@@ -1,14 +1,22 @@
 import sys
 
 '''
+abcabcbb
+
+{
+  b:1
+  c:1
+}
 '''
 
-def solution(nums):
-  
-  return nums
+def solution(str):
+  d = {}
+  for i in len(str):
 
-n = int(input())
-nums = [int(x) for x in input().split(" ")]
 
-print(solution(nums))
+  return str
+
+str = input()
+
+print(solution(str))
 
