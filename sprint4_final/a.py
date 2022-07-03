@@ -1,75 +1,24 @@
-# посылка рекурсивная 68933537
-# посылка итеративная 68967380
+# посылка рекурсивная
+# посылка итеративная
 import sys
 
 '''
--- ПРИНЦИП РАБОТЫ --
-Я реализовал broken_search c помощью двух методов
-find_shift и bisect_left ниже описываю как они работают.
-
--- find_shift - необходим для поиска места где левый элемент является меньше правого. 
-тоесть поиска сдвига который надо сделать влево чтобы получить нормально отсортированный массив.
-Например для массива значение сдвига 3.
-
-[4 5 6 1 2 3]
-
-если все элементы сдвинуть влево на 3, то получим нормально отсортированный массив
-
-[1 2 3 4 5 6]
-
-метод работает по методу двоичного поиска.
-в двоичном поиске удобно работать с полуинтервалом [l,r) где элемент с индексом r не принадлежит интервалу.
-базовый случай рекурсии когда
-
-r - l <= 1
-
-тоесть когда остался только один элемент в нашем полуинтервале [l,r).
-мы возващаем l+1 так как нам нужен первый правильный элемент (минимальный), плюс для защиты от переполнения
-берём это по модулю длины массива.
-
-l+1 % len(ar)
-
-В теле рекурсии, ищем индекс среднего элемента m.
-m = l+(r-l)//2
-если значение в левой части интервала ar[l] < ar[m] это значит что место сдвига массива находится на этом интервале
-поэтому делаем рекурсивный вызов для него, иначе делаем рекурсивный вызов для другой части массива.
-
---------------------
-bisect_left это практически обычный бинарный поиск элемента, но так как наш массив является "сломанным", 
-мы дополнительно передаём в него значение сдвига shift которое поможет нам вычислить "сломанные" индексы.
-функция принимает значения [l,r) являющиеся границами нашего полуинтервала, изначально они
-
-[0, len(ar))
-
-внутри функции мы вычисляем sl (абревиатура shifted left)
-
-sl = (l + shift) % len(nums)
-
-вычисляем путём прибавления сдвига и берём по модулю длины массива чтобы индекс перенёсся в начало массива при переполнении, так как 
-наш массив как мы является закольцованным.
-таким же способом вычисляется sm (абревиатура shifted middle)
-
-sm = (m + shift) % len(nums)
-
-остальная часть алгоритма просто binary search поиск без дубликатов, поэтому при нахождении нужного элемента, сразу возвращаем его индекс.
-
-Само решение функция broken_search делится на два вызова, вначале находим сдвиг, затем делаем бинарный поиск с переданным значением сдвига.
-
--- ========== UPDATES =========== --
-я оставил обе реализации на память, преобразовать рекурсивный метод в итеративный действительно оказалось не сложно для данного варианта, я полагаю
-помогла теория, глубокое понимание базового случая рекурсии и тела рекурсии. 
-Где условие базового случая рекурсии перешло в условие цикла.
-Но не сложно потому как присутствует лишь один рекурсивный вызов, в алгоритмаз с несколькими вызовами пришлось бы по видимому использовать стэк
-что имело бы ту же самую пространственную сложность как и рекурсивный метод, но рекурсивный короче и понятней.
-
--- ВРЕМЕННАЯ СЛОЖНОСТЬ --
-временная сложность каждой функции find_shift и bisect_left является log(N). так как каждый раз половина массива отбрасывается.
-итого log(N) + Log(N) => 2Log(N) => Log(N) так как константы отбрасываются.
-
--- ПРОСТРАНСТВЕННАЯ СЛОЖНОСТЬ --
-после того как я убрал рекурсию дополнительная пространственная сложность работы каждой функции составляет O(1).
-Суммарная пространственная сложность вместе с самим массивом O(N) + O(1) => O(N)
 '''
+
+# Put all words in hash map self.index
+# We need a count how many times in what document.
+'''
+{
+  # a word
+  "coffee": {
+    # document id: count
+    "1": 5
+  }
+}
+
+when we search for a word,
+we find in O(1) stats by word, we find all docs it is used in O(n) where n is number of docs 
+''' 
 
 class Searcher:
 
@@ -79,35 +28,50 @@ class Searcher:
       # split words
       doc = docs[docId]
       words = doc.split()
-      # put all words in hash map, we need a count how many times in what document.
-      '''
-      {
-        # a word
-        "coffee": {
-          # document id: count
-          "1": 5
-        }
-      }
-      ''' 
       # process words of a document
       for word in words:
-        # if word not exist, init
+        # init word in index
         if not word in self.index:
           self.index[word] = {}
+        # init docId in index
+        if not docId in self.index[word]:
+          self.index[word][docId] = 0
         # increment usage
         self.index[word][docId] +=1
 
   # search
   def search(self, search):
+    # print('index:',self.index)
+    # print("search:", search)
     words = search.split()
-    for word in words:
-      # gives me documents where used with counts
-      usages = self.index[word]
-      items = list(usages.items())
-      items.sort(key = lambda x: x[1], reverse = True)
-      # return counts
-      print(map(lambda x: x[1], items))
 
+    # we add words
+    searchHash = set()
+    for word in words:
+      # print("word:", word)
+      searchHash.add(word)
+
+    counts = {}
+    # print('searchHash:',searchHash)
+
+    '''
+    we need to take each word, find number of usages
+    res = {
+      <docId>: <count>
+    }
+    '''
+    res = {}
+    # we found how many times
+    for word in searchHash:
+      # gives me documents where used with counts
+      usages = self.index.get(word)
+      # print("usages:", word, usages)
+      if usages != None:
+        for docId, count in usages.items():
+          res[docId] = (res.get(docId) or 0) + count
+
+    lst = sorted(res.items(), key = lambda x: [-x[1], x[0]])
+    print(*map(lambda x: x[0]+1, lst[0:5]))
 
 
 # get docs
@@ -123,7 +87,7 @@ searcher = Searcher(docs)
 m = int(input())
 searches = []
 for i in range(m):
-  print(searcher.search(input()))
+  searcher.search(input())
 
 
 

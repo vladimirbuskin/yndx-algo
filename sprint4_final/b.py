@@ -1,99 +1,121 @@
-# посылка 68950585
 import sys
+import math
+import time
 
 '''
--- ПРИНЦИП РАБОТЫ --
-Я реализовал сортировку Quicksort без использования дополнительного массива при перестановке элементов, с заменой 
-на месте (swap in place).
+max number of elements: 10^5 - 100,000
+коэф наполнения 1/3 - 2/3
+1/4 - 10^5 * 4 => 400,000  Prime number in that range 400009
 
-Самая хитрая часть данного алгоритма находится в методе Partition.
-В этом методе, мы выбираем произвольный элемент pivot, я выбирал просто средний элемент по формуле
 
-m = l+(r-l)//2
-
-обрабатываемый интервал является полным интервалом [l, r] где элементы с индексами l и r включены в интервал.
-l - левая граница массива для процессинга
-r - правая граница.
-Суть алгоритма.
-- двигаем левый указатель пока
-ar[l] < pivot
-- двигаем правый указатель пока
-ar[r] > pivot
-- когда оба элемента найденны, мы меняем значения в местах указателей и двигаем указатели l++ и r--
-так как данные элементы являются обработанными.
-- всё это продолжаем пока левый указатель li <= ri правого указателя.
-возвращаем индекс где остановился левый указатель.
-так как интервал является полным и края входят в интервал, при разбитии массива на подмассивы попалам, для левой части массива 
-уменьшаем правую границу на единицу, таким образом массив делится ровно без перекрытия элементов.
-
--- ВРЕМЕННАЯ СЛОЖНОСТЬ --
-если нарисовать дерево вызовов то видно, что на каждом уровне рекурсии мы в сумме обрабатываем все N элементов.
-        N
-   N/2      N/2
-N/4  N/4  N/4  N/4
-
-и таких уровней у нас Log(N) так как глубина двоичного дерева есть Log(N) по основанию 2, так как каждый раз массив бъётся пополам (в среднем случае).
-ключ сортировки у нас содержит строку, поэтому это добавляет дополнительный множитель к сложности данного алгоритма, 
-возьмём длину строки ключа сортировки за М. Поэтому сложность получается N * Log(N) * M, так как Log(N) уровней, на каждом уровне обрабатывается
-N элементов и при обработке каждого элемента происходит сравнение со строкой длины M.
-В худжем случае алгоритм деградирует в N*N*M или N^2*M при постоянном неудачном выборе пивота, что привело бы к глубине рекурсии N.
-Но на практике такого не происходит, поэтому будем считать временную сложность данного алгоритма N*Log(N)*M
-
--- ПРОСТРАНСТВЕННАЯ СЛОЖНОСТЬ --
-Дополнительная средняя пространственная сложность данного алгоритма O(logN) используется под стэк памяти рекурсивных вызовов,
-так как глубина двоичного дерева равна Log(N).
-Но при неблагоприятном случае выбора pivot элемента, пространственная сложность в худшем случае может деградировать до O(N),
-когда выбранный pivot всегда является крайним элементом по значению в подмассиве (самый маленький или самый большой) при этом массив
-не будет делиться пополам, а будет убираться только лишь один элемент для каждого рекурсивного вызова. 
-На практике же такого не происходит поэтому принято считать, что дополнительная пространственная сложность данного алгоритма O(logN)
-дополнительной памяти под стэк вызовов, что несравнимо мало по сравнению с памятью занимаемой самим сортируемым массивом.
-Тоесть суммарная пространственная сложность O(N + Log(N)) где Log(N) отбрасывается, поэтому суммарная пространственная сложность 
-вместе с памятью под сам массив есть O(N)
+2*2*2*2 => 2^4 => 4^2
+2*2*2 => 2^3
+2*2 => 2^2
 '''
 
-class QuickSorter:
+ALPHA = 2 / (1 + pow(5, 0.5))
 
-  def __partition(self, ar, l, r, key):
-    li = l
-    ri = r
-    pivot = key(ar[l+(r-l)//2])
-    while li <= ri:
-      if key(ar[li]) < pivot:
-        li += 1
-        continue
-      if key(ar[ri]) > pivot:
-        ri -= 1
-        continue
-      ar[li],ar[ri] = ar[ri],ar[li]
-      li += 1
-      ri -= 1
-    return li
+ 
+class MyHashTable:
 
-  def __sort(self, ar, l, r, key):
-    if r-l <= 0:
-      return
-    c = self.__partition(ar, l, r, key)
-    self.__sort(ar, l, c-1, key)
-    self.__sort(ar, c, r, key)
-  
-  def sort(self, ar, key):
-    return self.__sort(ar, 0, len(ar)-1, key)
+  C1 = 2
+  C2 = 3
 
-def solution(ar):
-  sorter = QuickSorter()
+  EMPTY = -1
+  DELETED = -2
+
+  def __init__(self):
+    self.M = 400009
+    #self.M = 97
+    # we store, [<key>,<value>]
+    self.table = [[self.EMPTY, None] for _ in range(self.M)]
   
-  def sortKey(el):
-    return [-el[0],el[1],el[2]]
+  # returns number in [0..1) interval
+  def __hash(self, n):
+    global ALPHA
+    return (n * ALPHA) % 1
+
+  # returns key in [0..M) interval
+  def __key(self, n):
+    return math.floor(self.__hash(n) * self.M)
+
+  # get next address to put collision values
+  def __probeSquareNext(self, ki, i):
+    ki = (ki + self.C1*i + self.C2*i*i) % self.M
+    return ki
+
+  def put(self, key:int, value:int):
+    # key index
+    ki = self.__key(key)
+    i = 1
+    # we skip non-empty values with different keys
+    # print('ki', ki, self.table[ki])
+    while (self.table[ki][0] > self.EMPTY) and (self.table[ki][0] != key):
+      ki = self.__probeSquareNext(ki, i)
+      # print('ki', ki, self.table)
+      # print('probe',key, '=', value, 'ki =',ki,self.table[ki][0])
+      i += 1
+
+    # option 1: cell is empty
+    # option 2: cell has current key
+    self.table[ki][0] = key   # in both cases we update key, it doesn't hurt
+    self.table[ki][1] = value # we set value
+
+  def get(self, key:int):
+    # key index
+    ki = self.__key(key)
+    i = 1
+    # we skip DELETED and non-empty values with different keys
+    while self.table[ki][0] == self.DELETED or ((self.table[ki][0] > self.EMPTY) and (self.table[ki][0] != key)):
+      ki = self.__probeSquareNext(ki, i)
+      i += 1
+    # we found proper key
+    if self.table[ki][0] == key:
+      return self.table[ki][1]
+    # we got till empty cell
+    return None
+
+  def delete(self, key:int):
+    # key index
+    ki = self.__key(key)
+    i = 1
+    # we skip DELETED and non-empty values with different keys
+    while self.table[ki][0] == self.DELETED or ((self.table[ki][0] > self.EMPTY) and (self.table[ki][0] != key)):
+      ki = self.__probeSquareNext(ki, i)
+      i += 1
+    # we found proper key
+    if self.table[ki][0] == key:
+      self.table[ki][0] = self.DELETED
+      return self.table[ki][1]
+    return None
+
+class HashTable:
+
+  def __init__(self):
+    self.table = {}
   
-  sorter.sort(ar, sortKey)
-  return ar
+  def put(self, key:int, value:int):
+    self.table[key] = value
+
+  def get(self, key:int):
+    return self.table.get(key)
+
+  def delete(self, key:int):
+    ret = None
+    if key in self.table:
+      ret = self.table[key]
+      del self.table[key]
+    return ret
+
+ht = MyHashTable()
 
 n = int(input())
 ar = []
 for i in range(n):
-  name, score, fine = input().split()
-  ar.append([int(score), int(fine), name])
-
-sorted = solution(ar)
-for el in sorted:
-  print(el[2])
+  ln = input().split()
+  if ln[0] == 'get':
+    print(ht.get(int(ln[1])))
+  if ln[0] == 'put':
+    ht.put(int(ln[1]),int(ln[2]))
+  if ln[0] == 'delete':
+    print(ht.delete(int(ln[1])))

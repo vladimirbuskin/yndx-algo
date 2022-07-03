@@ -1,18 +1,27 @@
-from matplotlib import pyplot as plt
-from math import trunc as tr
+# from matplotlib import pyplot as plt
+# from math import trunc as tr
+import math
+import random
 
-def salary_to_bucket(value):
-    alpha = 2 / (1 + pow(5, 0.5))
+alpha = 2 / (1 + pow(5, 0.5))
+
+def hash1(value):
+    global alpha
     m = 971
-    bucket = tr((value * alpha - tr(value * alpha)) * m)
+    bucket = math.trunc((value * alpha -  math.trunc(value * alpha)) * m)
     return bucket
 
-myhist = [0] * 1000000
-n_bins = 100
-for i in range(1000000):
-    myhist[i] = salary_to_bucket(71*i)
+def hash2(n):
+    global alpha
+    M = 971
+    h = math.floor((n * alpha) % 1 * M)
+    # print(h)
+    return h
 
-fig, ax = plt.subplots(figsize =(10, 7))
-ax.hist(myhist, bins = n_bins)
- 
-plt.show()
+myhist = [0] * 971
+for i in range(1000000):
+    #h = hash1(random.randint(0, 999999))
+    h = hash2(i)
+    myhist[h] += 1 
+
+print(myhist)
