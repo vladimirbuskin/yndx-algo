@@ -1,7 +1,6 @@
 # номер посылки 69284162
 import sys
 import math
-import time
 
 '''
 -- ПРИНЦИП РАБОТЫ --
