@@ -107,9 +107,9 @@ class Searcher:
     # print('searchHash:',searchHash)
 
     '''
-    we need to take each word, find number of usages
+    we need to take each word, find number of usages and get results in structure
     res = {
-      <docId>: <count>
+      <documentId>: <workUsageCount>
     }
     '''
     res = {}
