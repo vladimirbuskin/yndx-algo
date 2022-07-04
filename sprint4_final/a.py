@@ -139,6 +139,3 @@ m = int(input())
 searches = []
 for i in range(m):
   searcher.search(input())
-
-
-
