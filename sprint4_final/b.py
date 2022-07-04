@@ -36,9 +36,7 @@ keyIndex = keyIndex + i*C1 + i*i*C2.
 Если бы таблица поддерживала рехеширование, пространственная сложность её была бы O(n) где n - кол-во элементов.
 '''
 
-
 ALPHA = (pow(5, 0.5) - 1) / 2
-
  
 class MyHashTable:
 
@@ -112,24 +110,6 @@ class MyHashTable:
       self.table[ki][0] = self.DELETED
       return self.table[ki][1]
     return None
-
-class HashTable:
-
-  def __init__(self):
-    self.table = {}
-  
-  def put(self, key:int, value:int):
-    self.table[key] = value
-
-  def get(self, key:int):
-    return self.table.get(key)
-
-  def delete(self, key:int):
-    ret = None
-    if key in self.table:
-      ret = self.table[key]
-      del self.table[key]
-    return ret
 
 ht = MyHashTable()
 
