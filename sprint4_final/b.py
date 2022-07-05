@@ -50,6 +50,7 @@ class MyHashTable:
   DELETED = -2
 
   def __init__(self):
+    #self.M = 300007
     self.M = 400009
     '''
     # Евгений привет, ты предложил сделать
@@ -94,21 +95,22 @@ class MyHashTable:
     return ki
 
   def put(self, key:int, value:int):
-    
-    # === Search to update
-    # we skip deleted and we skip non-empty values with different keys
-    ki = self.__getNextCellIndex(key)
+    # key index
+    ki = origKi = self.__key(key)
+    i = 1
+    # we skip DELETED and non-empty values with different keys
+    while self.table[ki][0] == self.DELETED or ((self.table[ki][0] != self.EMPTY) and (self.table[ki][0] != key)):
+      ki = self.__probeSquareNext(ki, i)
+      i += 1
       
     # if we found the key, we set new value
     if self.table[ki][0] == key:
       self.table[ki][1] = value
       return
 
-    # if we got here, means we didnt have value, we need to set it
-    # set into first empty or deleted cell
-    ki = self.__key(key)
+    # key is not found, find next deleted or empty
+    ki = origKi
     i = 1
-    # we skip non-empty values
     while (self.table[ki][0] > self.EMPTY):
       ki = self.__probeSquareNext(ki, i)
       i += 1
