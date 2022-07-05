@@ -45,8 +45,8 @@ HashTable<string, HashTable<int, int>>
 после этого отбираем 5 элементов вначале отсортированного списка, и возвращаем их documentId.
 
 -- ВРЕМЕННАЯ СЛОЖНОСТЬ --
-Временная сложность создания индекса, O(N*M*K) где N кол-во документов а М кол-во слов в документе и
-K - кол-во символов в слове, ведь хэш таблица будет вычислять хэш для каждого слова, в документе.
+Временная сложность создания индекса, O(N) где N кол-во фходных данных (символов), потомучто мы обрабатываем каждое слово один раз
+и в каждом слове каждый символ учавствует в расчёте хэша для этого слова, зависимость линейная поэтому O(N)
 
 Временная сложность одного поиска равна O(N*M + D*Log(D)) где 
 N кол-во слов в поисковой фразе
@@ -76,20 +76,16 @@ class Searcher:
 
   def __init__(self, docs):
     self.index = {}
-    for docId in range(len(docs)):
+    for docId, doc in enumerate(docs):
       # split words
-      doc = docs[docId]
       words = doc.split()
       # process words of a document
       for word in words:
         # init word in index
         if not word in self.index:
           self.index[word] = {}
-        # init docId in index
-        if not docId in self.index[word]:
-          self.index[word][docId] = 0
-        # increment usage
-        self.index[word][docId] +=1
+        # inc usage of word in document
+        self.index[word][docId] = self.index[word].get(docId, 0) + 1
 
   # search
   def search(self, search):
@@ -119,7 +115,7 @@ class Searcher:
       usages = self.index.get(word)
       if usages != None:
         for docId, count in usages.items():
-          res[docId] = (res.get(docId) or 0) + count
+          res[docId] = res.get(docId, 0) + count
 
     lst = sorted(res.items(), key = lambda x: [-x[1], x[0]])
     print(*map(lambda x: x[0]+1, lst[0:5]))
