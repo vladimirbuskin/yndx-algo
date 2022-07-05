@@ -1,6 +1,6 @@
 # номер посылки 69284162
 import sys
-import math
+#import math
 
 '''
 -- ПРИНЦИП РАБОТЫ --
@@ -39,8 +39,6 @@ keyIndex = keyIndex + i*C1 + i*i*C2.
 Если бы таблица поддерживала рехеширование, пространственная сложность её была бы O(n) где n - кол-во элементов.
 '''
 
-ALPHA = (pow(5, 0.5) - 1) / 2
- 
 class MyHashTable:
 
   C1 = 2
@@ -48,6 +46,7 @@ class MyHashTable:
 
   EMPTY = -1
   DELETED = -2
+  ALPHA = (pow(5, 0.5) - 1) / 2
 
   def __init__(self):
     #self.M = 300007
@@ -71,26 +70,28 @@ class MyHashTable:
     self.table = [[self.EMPTY, None] for _ in range(self.M)]
   
   # returns number in [0..1) interval
-  def __hash(self, n):
-    global ALPHA
-    return (n * ALPHA) % 1
+  # def __hash(self, n):
+  #   return (n * self.ALPHA) % 1
 
   # returns key in [0..M) interval
   def __key(self, n):
-    return math.floor(self.__hash(n) * self.M)
+    #return math.floor(self.__hash(n) * self.M)
+    # inline _hash function, to save some (ms)
+    return int((n * self.ALPHA) % 1 * self.M)
 
   # get next address to put collision values
   def __probeSquareNext(self, ki, i):
-    ki = (ki + self.C1*i + self.C2*i*i) % self.M
-    return ki
+    return (ki + self.C1*i + self.C2*i*i) % self.M
 
   def __getNextCellIndex(self, key):
     # key index
     ki = self.__key(key)
     i = 1
     # we skip DELETED and non-empty values with different keys
-    while self.table[ki][0] == self.DELETED or ((self.table[ki][0] != self.EMPTY) and (self.table[ki][0] != key)):
+    v = self.table[ki][0]
+    while v == self.DELETED or (v != self.EMPTY and v != key):
       ki = self.__probeSquareNext(ki, i)
+      v = self.table[ki][0]
       i += 1
     return ki
 
@@ -99,12 +100,14 @@ class MyHashTable:
     ki = origKi = self.__key(key)
     i = 1
     # we skip DELETED and non-empty values with different keys
-    while self.table[ki][0] == self.DELETED or ((self.table[ki][0] != self.EMPTY) and (self.table[ki][0] != key)):
+    v = self.table[ki][0]
+    while v == self.DELETED or (v != self.EMPTY and v != key):
       ki = self.__probeSquareNext(ki, i)
+      v = self.table[ki][0]
       i += 1
       
     # if we found the key, we set new value
-    if self.table[ki][0] == key:
+    if v == key:
       self.table[ki][1] = value
       return
 
@@ -144,8 +147,11 @@ ar = []
 for i in range(n):
   ln = input().split()
   if ln[0] == 'get':
-    print(ht.get(int(ln[1])))
+    ar.append(ht.get(int(ln[1])))
   if ln[0] == 'put':
     ht.put(int(ln[1]),int(ln[2]))
   if ln[0] == 'delete':
-    print(ht.delete(int(ln[1])))
+    ar.append(ht.delete(int(ln[1])))
+
+for a in ar:
+  print(a)
