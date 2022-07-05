@@ -84,10 +84,8 @@ class MyHashTable:
     ki = self.__key(key)
     i = 1
     # we skip DELETED and non-empty values with different keys
-    v = self.table[ki][0]
-    while v == self.DELETED or (v != self.EMPTY and v != key):
+    while self.table[ki][0] == self.DELETED or (self.table[ki][0] != self.EMPTY and self.table[ki][0] != key):
       ki = self.__probeSquareNext(ki, i)
-      v = self.table[ki][0]
       i += 1
     return ki
 
