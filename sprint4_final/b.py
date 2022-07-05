@@ -83,52 +83,52 @@ class MyHashTable:
     ki = (ki + self.C1*i + self.C2*i*i) % self.M
     return ki
 
-  def put(self, key:int, value:int):
+  def __getNextCellIndex(self, key):
     # key index
     ki = self.__key(key)
-    di = None
     i = 1
+    # we skip DELETED and non-empty values with different keys
+    while self.table[ki][0] == self.DELETED or ((self.table[ki][0] != self.EMPTY) and (self.table[ki][0] != key)):
+      ki = self.__probeSquareNext(ki, i)
+      i += 1
+    return ki
+
+  def put(self, key:int, value:int):
     
     # === Search to update
     # we skip deleted and we skip non-empty values with different keys
-    while (self.table[ki][0] == self.DELETED) or ((self.table[ki][0] != self.EMPTY) and (self.table[ki][0] != key)):
-      ki = self.__probeSquareNext(ki, i)
-      # if not deleted move same place where ki, otherwise di will point to deleted element
-      if di == None and self.table[ki][0] == self.DELETED: di = ki
-      i += 1
+    ki = self.__getNextCellIndex(key)
       
     # if we found the key, we set new value
     if self.table[ki][0] == key:
       self.table[ki][1] = value
       return
 
-    # == if we got here, means we didnt find the key we need, we need to add it
-    # we put into first deleted or just next index
-    self.table[di or ki][0] = key
-    self.table[di or ki][1] = value
+    # if we got here, means we didnt have value, we need to set it
+    # set into first empty or deleted cell
+    ki = self.__key(key)
+    i = 1
+    # we skip non-empty values
+    while (self.table[ki][0] > self.EMPTY):
+      ki = self.__probeSquareNext(ki, i)
+      i += 1
+
+    # write into first Empty or Deleted cell
+    self.table[ki][0] = key
+    self.table[ki][1] = value
 
   def get(self, key:int):
     # key index
-    ki = self.__key(key)
-    i = 1
-    # we skip DELETED and non-empty values with different keys
-    while self.table[ki][0] == self.DELETED or ((self.table[ki][0] > self.EMPTY) and (self.table[ki][0] != key)):
-      ki = self.__probeSquareNext(ki, i)
-      i += 1
+    ki = self.__getNextCellIndex(key)
     # we found proper key
     if self.table[ki][0] == key:
       return self.table[ki][1]
-    # we got till empty cell
+    # we didn't found
     return None
 
   def delete(self, key:int):
     # key index
-    ki = self.__key(key)
-    i = 1
-    # we skip DELETED and non-empty values with different keys
-    while self.table[ki][0] == self.DELETED or ((self.table[ki][0] > self.EMPTY) and (self.table[ki][0] != key)):
-      ki = self.__probeSquareNext(ki, i)
-      i += 1
+    ki = self.__getNextCellIndex(key)
     # we found proper key
     if self.table[ki][0] == key:
       self.table[ki][0] = self.DELETED
