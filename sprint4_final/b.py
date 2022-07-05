@@ -1,6 +1,5 @@
 # номер посылки 69284162
 import sys
-#import math
 
 '''
 -- ПРИНЦИП РАБОТЫ --
@@ -49,7 +48,6 @@ class MyHashTable:
   ALPHA = (pow(5, 0.5) - 1) / 2
 
   def __init__(self):
-    #self.M = 300007
     self.M = 400009
     '''
     # Евгений привет, ты предложил сделать
@@ -70,15 +68,13 @@ class MyHashTable:
     self.table = [[self.EMPTY, None] for _ in range(self.M)]
   
   # returns number in [0..1) interval
-  # def __hash(self, n):
-  #   return (n * self.ALPHA) % 1
+  def __hash(self, n):
+    return (n * self.ALPHA) % 1
 
   # returns key in [0..M) interval
   def __key(self, n):
-    #return math.floor(self.__hash(n) * self.M)
-    # inline _hash function, to save some (ms)
-    return int((n * self.ALPHA) % 1 * self.M)
-
+    return int(self.__hash(n) * self.M)
+    
   # get next address to put collision values
   def __probeSquareNext(self, ki, i):
     return (ki + self.C1*i + self.C2*i*i) % self.M
@@ -97,27 +93,18 @@ class MyHashTable:
 
   def put(self, key:int, value:int):
     # key index
-    ki = origKi = self.__key(key)
-    i = 1
-    # we skip DELETED and non-empty values with different keys
-    v = self.table[ki][0]
-    while v == self.DELETED or (v != self.EMPTY and v != key):
-      ki = self.__probeSquareNext(ki, i)
-      v = self.table[ki][0]
-      i += 1
-      
-    # if we found the key, we set new value
-    if v == key:
+    ki = self.__getNextCellIndex(key)
+    # we found proper key, put value there and return
+    if self.table[ki][0] == key:
       self.table[ki][1] = value
       return
 
-    # key is not found, find next deleted or empty
-    ki = origKi
+    # key is not found, find first deleted or empty
+    ki = self.__key(key)
     i = 1
     while (self.table[ki][0] > self.EMPTY):
       ki = self.__probeSquareNext(ki, i)
       i += 1
-
     # write into first Empty or Deleted cell
     self.table[ki][0] = key
     self.table[ki][1] = value
