@@ -28,7 +28,10 @@ keyIndex = keyIndex + i*C1 + i*i*C2.
 где i - номер пробирования по порядку.
 
 -- ВРЕМЕННАЯ СЛОЖНОСТЬ --
+Временная сложность инициализации моей хэщ таблицы которая не поддерживает рехеширование, является O(1).
+В ней очень много элементов, и инициализация занимает много времени, но не зависит от входных данных поэтому O(1).
 Временная сложность методов put, get, delete в среднем O(1).
+Суммарное время обработки файла O(N) где N кол-во строк во входном файле.
 
 -- ПРОСТРАНСТВЕННАЯ СЛОЖНОСТЬ --
 Так как таблица не поддерживает рехеширование, её пространственную сложность можно считать O(1) c учётом её ограничения
@@ -48,8 +51,22 @@ class MyHashTable:
 
   def __init__(self):
     self.M = 400009
-    #self.M = 97
-    # we store, [<key>,<value>]
+    '''
+    # Евгений привет, ты предложил сделать
+    # self.table = [(self.EMPTY, None)] * self.M 
+    # я хотел заинициализировать массив сразу и дальше уже не менять его размер, 
+    # чтобы не выделять и не освобождать память. Вы предложили Tuple которые не позволяет менять содержимое.
+    # тоесть необходимо будет пересоздавать Tuples, это что я хотел предотвратить.
+    использование же * создаёт референс на тот же самый лист второго уровня, что будет работать не верно. К примеру:
+
+    >>> a = [[1,2]] * 3
+    >>> a[0][0] = 0
+    >>> a
+    [[0, 2], [0, 2], [0, 2]]
+
+    поэтому я сделал форму как ниже, с умножением не получалось а Tuple нельзя менять.
+    Евгений или ты имел ввиду сделать как-то по другому?
+    '''
     self.table = [[self.EMPTY, None] for _ in range(self.M)]
   
   # returns number in [0..1) interval
@@ -69,19 +86,26 @@ class MyHashTable:
   def put(self, key:int, value:int):
     # key index
     ki = self.__key(key)
+    di = None
     i = 1
-    # we skip non-empty values with different keys
-    # print('ki', ki, self.table[ki])
-    while (self.table[ki][0] > self.EMPTY) and (self.table[ki][0] != key):
+    
+    # === Search to update
+    # we skip deleted and we skip non-empty values with different keys
+    while (self.table[ki][0] == self.DELETED) or ((self.table[ki][0] != self.EMPTY) and (self.table[ki][0] != key)):
       ki = self.__probeSquareNext(ki, i)
-      # print('ki', ki, self.table)
-      # print('probe',key, '=', value, 'ki =',ki,self.table[ki][0])
+      # if not deleted move same place where ki, otherwise di will point to deleted element
+      if di == None and self.table[ki][0] == self.DELETED: di = ki
       i += 1
+      
+    # if we found the key, we set new value
+    if self.table[ki][0] == key:
+      self.table[ki][1] = value
+      return
 
-    # option 1: cell is empty
-    # option 2: cell has current key
-    self.table[ki][0] = key   # in both cases we update key, it doesn't hurt
-    self.table[ki][1] = value # we set value
+    # == if we got here, means we didnt find the key we need, we need to add it
+    # we put into first deleted or just next index
+    self.table[di or ki][0] = key
+    self.table[di or ki][1] = value
 
   def get(self, key:int):
     # key index
