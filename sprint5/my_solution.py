@@ -1,34 +1,20 @@
-def solution(root) -> bool:
-  return isSearchTree(root, -1000000000, 1000000000)
-
-def isSearchTree(root, left, right) -> bool:
+def insert(root, key):
+  # base cases
   if root == None:
-    return True
+    return
 
-  if root.value <= left or root.value >= right:
-    return False
+  if key < root.value:
+    if root.left == None:
+      # insert left
+      root.left = Node(None, None, key)
+    else:
+      insert(root.left, key)
 
-  return isSearchTree(root.left, left, root.value) and isSearchTree(root.right, root.value, right)
+  if key >= root.value:
+    if root.right == None:
+      # insert right
+      root.right = Node(None, None, key)
+    else:
+      insert(root.right, key)
 
-
-
-2
-
-  1
-2
-  1
-    2
-
-3
-===================
-  2
-1   3
-
-1
-   2
-      3
-
-     3
-   2
- 1
-
+  return root
