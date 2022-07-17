@@ -1,20 +1,14 @@
-def insert(root, key):
-  # base cases
-  if root == None:
+#from node import Node
+
+def print_range(node, l, r):
+  if node == None:
     return
+  goleft = node.value >= l
+  goright = node.value <= r
 
-  if key < root.value:
-    if root.left == None:
-      # insert left
-      root.left = Node(None, None, key)
-    else:
-      insert(root.left, key)
-
-  if key >= root.value:
-    if root.right == None:
-      # insert right
-      root.right = Node(None, None, key)
-    else:
-      insert(root.right, key)
-
-  return root
+  if goleft:
+    print_range(node.left, l, r)
+  if l <= node.value <= r:
+    print(node.value)
+  if goright:
+    print_range(node.right, l, r)

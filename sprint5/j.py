@@ -1,4 +1,3 @@
-import json
 # Comment it before submitting
 class Node:  
   def __init__(self, left=None, right=None, value=0):  
@@ -7,17 +6,20 @@ class Node:
     self.value = value
 
 def insert(root, key):
+  # base cases
   if root == None:
     return
 
   if key < root.value:
     if root.left == None:
+      # insert left
       root.left = Node(None, None, key)
     else:
       insert(root.left, key)
 
   if key >= root.value:
-    if (root.right == None):
+    if root.right == None:
+      # insert right
       root.right = Node(None, None, key)
     else:
       insert(root.right, key)
@@ -35,11 +37,9 @@ def printTree(root):
 
 def test():
     node1 = Node(None, None, 7)
-    node2 = Node(node1, None, 8)
+    node2 = Node(node1, None, 9)
     node3 = Node(None, node2, 7)
-    new_head = insert(node3, 6)
+    new_head = insert(node3, 7)
     printTree(new_head)
-    assert new_head is node3
-    assert new_head.left.value == 6
 
 test()
