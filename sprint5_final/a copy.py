@@ -1,4 +1,4 @@
-# посылка 69503348
+# посылка 69417205
 import sys
 
 '''
@@ -53,6 +53,8 @@ class MinHeap:
 
   def __siftDown(self, ind):
     while True:
+      print(1)
+
       # find children indexes
       li = self.__getChildLeftIndex(ind)
       ri = self.__getChildRightIndex(ind)
@@ -75,9 +77,8 @@ class MinHeap:
       #print('COMPARE', self.ar, ind, ci)
       if self.comparator(self.ar[ind]) > self.comparator(self.ar[ci]):
         self.ar[ind], self.ar[ci] = self.ar[ci], self.ar[ind]
-        ind = ci;
-      else:
-        return
+        print(ind, ci)
+        ind = ci
 
   def __siftUp(self, ind):
     while ind > 1:
@@ -104,9 +105,7 @@ class MinHeap:
       self.ar[1] = last
       # sift down
       self.__siftDown(1)
-    
     return result
-
 
 heap = MinHeap(lambda x: x)
 
@@ -118,11 +117,7 @@ for i in range(n):
   node = [-int(solved), int(fine), name]
   heap.add(node)
 
-out = []
 n = heap.pop()
 while n != None:
-  out.append(n[2])
+  print(n[2]);
   n = heap.pop();
-
-for i in range(len(out)):
-  print(out[i])
