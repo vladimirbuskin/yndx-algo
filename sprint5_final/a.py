@@ -1,4 +1,4 @@
-# посылка 69503348
+# посылка 69503366
 import sys
 
 '''
@@ -52,32 +52,29 @@ class MinHeap:
     return i * 2
 
   def __siftDown(self, ind):
-    while True:
-      # find children indexes
-      li = self.__getChildLeftIndex(ind)
-      ri = self.__getChildRightIndex(ind)
-      ci = None
+    # find children indexes
+    li = self.__getChildLeftIndex(ind)
+    ri = self.__getChildRightIndex(ind)
+    ci = None
 
-      # base case, index out of array length
-      if (li > len(self.ar)-1):
-        return
-      
-      # if there is no right node, take left node
-      if ri > len(self.ar)-1:
-        ci = li
-      # we take smallest value
-      elif self.comparator(self.ar[li]) <= self.comparator(self.ar[ri]):
-        ci = li
-      else:
-        ci = ri
+    # base case, index out of array length
+    if (li > len(self.ar)-1):
+      return
+    
+    # if there is no right node, take left node
+    if ri > len(self.ar)-1:
+      ci = li
+    # we take smallest value
+    elif self.comparator(self.ar[li]) <= self.comparator(self.ar[ri]):
+      ci = li
+    else:
+      ci = ri
 
-      # if parent node still smaller than smallest child, we switch and recurse lower
-      #print('COMPARE', self.ar, ind, ci)
-      if self.comparator(self.ar[ind]) > self.comparator(self.ar[ci]):
-        self.ar[ind], self.ar[ci] = self.ar[ci], self.ar[ind]
-        ind = ci;
-      else:
-        return
+    # if parent node still smaller than smallest child, we switch and recurse lower
+    #print('COMPARE', self.ar, ind, ci)
+    if self.comparator(self.ar[ind]) > self.comparator(self.ar[ci]):
+      self.ar[ind], self.ar[ci] = self.ar[ci], self.ar[ind]
+      self.__siftDown(ci)
 
   def __siftUp(self, ind):
     while ind > 1:
@@ -85,7 +82,6 @@ class MinHeap:
       if self.comparator(self.ar[parInd]) > self.comparator(self.ar[ind]):
         # switch
         self.ar[parInd], self.ar[ind] = self.ar[ind], self.ar[parInd]
-        self.__siftUp(parInd)
       ind = parInd
 
   def add(self, value):
@@ -118,11 +114,7 @@ for i in range(n):
   node = [-int(solved), int(fine), name]
   heap.add(node)
 
-out = []
 n = heap.pop()
 while n != None:
-  out.append(n[2])
+  print(n[2]);
   n = heap.pop();
-
-for i in range(len(out)):
-  print(out[i])
