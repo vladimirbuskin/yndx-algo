@@ -1,4 +1,4 @@
-# посылка 69417205
+# посылка 69511456
 import sys
 
 '''
@@ -42,19 +42,23 @@ class MinHeap:
     self.ar = [0]
     self.comparator = comparator
 
-  def __getParentIndex(self, i):
+  @staticmethod
+  def __getParentIndex(i):
     return i // 2
 
-  def __getChildRightIndex(self, i):
+  @staticmethod
+  def __getChildRightIndex(i):
     return i * 2 + 1
 
-  def __getChildLeftIndex(self, i):
+  @staticmethod
+  def __getChildLeftIndex(i):
     return i * 2
 
   def __siftDown(self, ind):
+    # сделал через цикл, но потом когда отсылал, как то старая рекурсивная версия 
+    # sneaked into my code :)
+    # посылаю итеративную версию.
     while True:
-      print(1)
-
       # find children indexes
       li = self.__getChildLeftIndex(ind)
       ri = self.__getChildRightIndex(ind)
@@ -77,8 +81,9 @@ class MinHeap:
       #print('COMPARE', self.ar, ind, ci)
       if self.comparator(self.ar[ind]) > self.comparator(self.ar[ci]):
         self.ar[ind], self.ar[ci] = self.ar[ci], self.ar[ind]
-        print(ind, ci)
-        ind = ci
+        ind = ci;
+      else:
+        return
 
   def __siftUp(self, ind):
     while ind > 1:
@@ -86,7 +91,6 @@ class MinHeap:
       if self.comparator(self.ar[parInd]) > self.comparator(self.ar[ind]):
         # switch
         self.ar[parInd], self.ar[ind] = self.ar[ind], self.ar[parInd]
-        self.__siftUp(parInd)
       ind = parInd
 
   def add(self, value):
@@ -105,7 +109,9 @@ class MinHeap:
       self.ar[1] = last
       # sift down
       self.__siftDown(1)
+    
     return result
+
 
 heap = MinHeap(lambda x: x)
 

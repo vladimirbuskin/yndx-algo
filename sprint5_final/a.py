@@ -1,4 +1,4 @@
-# посылка 69503366
+# посылка 69511456
 import sys
 
 '''
@@ -42,39 +42,45 @@ class MinHeap:
     self.ar = [0]
     self.comparator = comparator
 
-  def __getParentIndex(self, i):
+  @staticmethod
+  def __getParentIndex(i):
     return i // 2
 
-  def __getChildRightIndex(self, i):
+  @staticmethod
+  def __getChildRightIndex(i):
     return i * 2 + 1
 
-  def __getChildLeftIndex(self, i):
+  @staticmethod
+  def __getChildLeftIndex(i):
     return i * 2
 
   def __siftDown(self, ind):
-    # find children indexes
-    li = self.__getChildLeftIndex(ind)
-    ri = self.__getChildRightIndex(ind)
-    ci = None
+    while True:
+      # find children indexes
+      li = self.__getChildLeftIndex(ind)
+      ri = self.__getChildRightIndex(ind)
+      ci = None
 
-    # base case, index out of array length
-    if (li > len(self.ar)-1):
-      return
-    
-    # if there is no right node, take left node
-    if ri > len(self.ar)-1:
-      ci = li
-    # we take smallest value
-    elif self.comparator(self.ar[li]) <= self.comparator(self.ar[ri]):
-      ci = li
-    else:
-      ci = ri
+      # base case, index out of array length
+      if (li > len(self.ar)-1):
+        return
+      
+      # if there is no right node, take left node
+      if ri > len(self.ar)-1:
+        ci = li
+      # we take smallest value
+      elif self.comparator(self.ar[li]) <= self.comparator(self.ar[ri]):
+        ci = li
+      else:
+        ci = ri
 
-    # if parent node still smaller than smallest child, we switch and recurse lower
-    #print('COMPARE', self.ar, ind, ci)
-    if self.comparator(self.ar[ind]) > self.comparator(self.ar[ci]):
-      self.ar[ind], self.ar[ci] = self.ar[ci], self.ar[ind]
-      self.__siftDown(ci)
+      # if parent node still smaller than smallest child, we switch and recurse lower
+      #print('COMPARE', self.ar, ind, ci)
+      if self.comparator(self.ar[ind]) > self.comparator(self.ar[ci]):
+        self.ar[ind], self.ar[ci] = self.ar[ci], self.ar[ind]
+        ind = ci;
+      else:
+        return
 
   def __siftUp(self, ind):
     while ind > 1:
