@@ -1,29 +1,47 @@
-# Comment it before submitting
-class Node:  
-    def __init__(self, value, left=None, right=None):  
-        self.value = value  
-        self.right = right  
-        self.left = left
+from collections import deque
+n, m = [int(x) for x in input().split()]
 
-    
-def solution(root1, root2):
-  if root1 == None and root2 == None:
-    return True
-  if root1 == None or root2 == None:
-    return False
-  if root1.value != root2.value:
-    return False
-  return solution(root1.left, root2.left) and solution(root1.right, root2. right)
+adList = {}
+colors = {}
+for i in range(m):
+  v1, v2 = [int(x) for x in input().split()]
+  # init
+  if adList.get(v1) == None: adList[v1] = []
+  if adList.get(v2) == None: adList[v2] = []
+  adList[v1].append(v2)
+  adList[v2].append(v1)
+  # color white
+  colors[v1] = 0
+  colors[v2] = 0
+s = int(input())
 
+'''
+0 - white
+1 - gray
+2 - black
+'''
 
-def test():
-    node1 = Node(1,  None,  None)
-    node2 = Node(2,  None,  None)
-    node3 = Node(3,  node1,  node2)
+def bfs(adList, s, colors):
+  st = deque()
+  st.append(s)
+  while len(st) > 0:
+    s = st.popleft()
+    # if not visited continue
+    if colors.get(s, 0) == 0:
+      # process
+      print(s)
+      # mark grey
+      colors[s] = 1
+      # put back
+      st.append(s)
+      # take white neighbours
+      for v in adList.get(s, []):
+        # take only white vertexes
+        if colors[v] == 0:
+          st.append(v)
+    # if grey already
+    else:
+      # processed
+      colors[s] = 2
 
-    node4 = Node(1, None,  None)
-    node5 = Node(2, None, None)
-    node6 = Node(3, node4, node5)
-    
-    assert solution(node3, node6)
-test()
+bfs(adList, s, colors)
