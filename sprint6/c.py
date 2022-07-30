@@ -1,34 +1,48 @@
-
+#from collections import deque
 n, m = [int(x) for x in input().split()]
 
 adList = {}
+colors = {}
 for i in range(m):
   v1, v2 = [int(x) for x in input().split()]
   # init
   if adList.get(v1) == None: adList[v1] = []
+  if adList.get(v2) == None: adList[v2] = []
   adList[v1].append(v2)
-
-keys = adList.keys()
-for i in range(n):
-  v = i+1
-  # init row
-  r = [0]*n
-  # set row values for a vertex
-  vx = adList.get(v)
-  if vx != None:
-    for j in range(len(vx)):
-      r[vx[j]-1] = 1
-  # print row
-  print(*r)
+  adList[v2].append(v1)
+  # color white
+  colors[v1] = 0
+  colors[v2] = 0
+s = int(input())
 
 '''
-{
-  1: [2,4],
-  2: [1,3],
-  3: [2,4],
-  4: [1,3],
-}
-1. Make adjList
-2. Sort lists for each vertex
-
+0 - white
+1 - gray
+2 - black
 '''
+
+def dfs(adList, s, colors):
+  st = []
+  st.append(s)
+  while len(st) > 0:
+    s = st.pop()
+    # if not visited continue
+    if colors.get(s, 0) == 0:
+      # process
+      print(s)
+      # mark grey
+      colors[s] = 1
+      # put back
+      st.append(s)
+      # take white neighbours
+      for i in range(len(adList.get(s, []))-1,-1,-1):
+        v = adList[s][i]
+        # take only white vertexes
+        if colors[v] == 0:
+          st.append(v)
+    # if grey already
+    else:
+      # processed
+      colors[s] = 2
+
+dfs(adList, s, colors)
