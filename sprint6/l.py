@@ -13,7 +13,6 @@ for i in range(m):
   colors[v1] = 0
   colors[v2] = 0
 
-s = int(input())
 
 def solution(adList, colors):
   print(adList)
