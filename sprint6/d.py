@@ -15,6 +15,9 @@ for i in range(m):
   colors[v2] = 0
 s = int(input())
 
+for k,ar in adList.items():
+  ar.sort()
+
 '''
 0 - white
 1 - gray
@@ -22,16 +25,17 @@ s = int(input())
 '''
 
 def bfs(adList, s, colors):
+  out = []
   st = deque()
   st.append(s)
   while len(st) > 0:
     s = st.popleft()
     # if not visited continue
     if colors.get(s, 0) == 0:
-      # process
-      print(s)
       # mark grey
       colors[s] = 1
+      # process
+      out.append(s)
       # put back
       st.append(s)
       # take white neighbours
@@ -39,9 +43,8 @@ def bfs(adList, s, colors):
         # take only white vertexes
         if colors[v] == 0:
           st.append(v)
-    # if grey already
-    else:
-      # processed
-      colors[s] = 2
+    # processed
+    colors[s] = 2
+  return out
 
-bfs(adList, s, colors)
+print(*bfs(adList, s, colors))

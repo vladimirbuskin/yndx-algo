@@ -21,6 +21,10 @@ s = int(input())
 2 - black
 '''
 
+for k,ar in adList.items():
+  ar.sort()
+
+
 def dfs(adList, s, colors):
   st = []
   st.append(s)
@@ -35,7 +39,7 @@ def dfs(adList, s, colors):
       # put back
       st.append(s)
       # take white neighbours
-      for i in range(len(adList.get(s, []))-1,-1,-1):
+      for i in range(len(adList.get(s,[]))-1,-1,-1):
         v = adList[s][i]
         # take only white vertexes
         if colors[v] == 0:
