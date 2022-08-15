@@ -1,0 +1,13 @@
+5
+RRRB
+BRR
+BR
+R
+
+NO
+  1 2 3 4 5
+1   R R R B 
+2     B R R 
+3       B R 
+4         R
+5         
