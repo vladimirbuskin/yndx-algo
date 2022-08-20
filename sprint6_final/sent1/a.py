@@ -24,33 +24,26 @@ adList = [
 
 -- ВРЕМЕННАЯ СЛОЖНОСТЬ --
 данный алгоритм проходит через все вершины V - O(N) и на каждом шаге достаёт элемент из кучи O(Log(E))
-А также в процессе прохода через вершины мы создаём кучу размера E (кол-во рёбер).
-Добавление одного элемента Log(E), но амортизационная сложность создания всей кучи O(E)
-так как кол-во элементов кучи постепенно увеличивается. 
-Мы не умножаем O(N) на O(E), потомучто все рёбра добавляются лишь раз.
-
+А также в процессе прохода через вершины мы создаём кучу размера E (кол-во рёбер) и добавляем каждое ребро в кучу.
+Добавление одного элемента Log(E). 
 поэтому суммарная сложность
-O(V * Log(E) + E) упрощается до O(V * Log(E))
+O(V * Log(E) + E * Log(E))
 
 -- ПРОСТРАНСТВЕННАЯ СЛОЖНОСТЬ --
 дополнительная память затрачиваемая на работу алгоритма (помимо хранения графа)
 является O(V + E) так как в процессе работы алгоритма мы храним и все вершины
-(added, not_added) и все рёбра (edges).
+(added) и все рёбра (edges).
 '''
 
 import heapq
-n, m = [int(x) for x in input().split()]
+n, m = map(int, input().split())
 added = set()
-not_added = set()
 edges = []
 sum = 0
 
-for i in range(1, n+1):
-  not_added.add(i)
-
 adList = {}
 for i in range(m):
-  v1, v2, w = [int(x) for x in input().split()]
+  v1, v2, w = map(int, input().split())
   if adList.get(v1) == None: adList[v1] = []
   if adList.get(v2) == None: adList[v2] = []
   adList[v1].append([v2,w])
@@ -79,10 +72,9 @@ adList = [
 
 def addVertex(v):
   added.add(v)
-  not_added.remove(v)
-  # add edges which incident to adList and their vertex is not_added
+  # add edges which incident to adList and their vertex is not in added
   for u, w in adList[v]:
-    if u in not_added:
+    if u not in added:
       heapq.heappush(edges, [-w, w, v, u])
 
 def solution(n,adList):
@@ -100,15 +92,15 @@ def solution(n,adList):
     v = next(iter(adList))
     # -w, w, v, u
     edges = [[0, 0, v, v]]
-    while len(edges) > 0:
+    while len(edges) > 0:  # O(N)
       # weight, vertex
-      _, w, v, u = heapq.heappop(edges)
+      _, w, v, u = heapq.heappop(edges) # Log(E)
       if u not in added:
         # print('add', u)
         addVertex(u)
         sum += w
 
-  if len(not_added) > 0:
+  if len(added) != n:
     return MANY_COMPONENTS
   else:
     return sum
