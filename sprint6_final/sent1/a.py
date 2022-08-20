@@ -1,4 +1,4 @@
-# номер посылки 69630185
+# номер посылки 69706536
 
 '''
 -- ПРИНЦИП РАБОТЫ --
@@ -41,11 +41,11 @@ added = set()
 edges = []
 sum = 0
 
-adList = {}
+adList = [None]*(n+1)
 for i in range(m):
   v1, v2, w = map(int, input().split())
-  if adList.get(v1) == None: adList[v1] = []
-  if adList.get(v2) == None: adList[v2] = []
+  if adList[v1] == None: adList[v1] = []
+  if adList[v2] == None: adList[v2] = []
   adList[v1].append([v2,w])
   adList[v2].append([v1,w])
 
@@ -77,7 +77,7 @@ def addVertex(v):
     if u not in added:
       heapq.heappush(edges, [-w, w, v, u])
 
-def solution(n,adList):
+def solution(n,adList,m):
   global edges
   global sum
   MANY_COMPONENTS = 'Oops! I did it again'
@@ -85,11 +85,11 @@ def solution(n,adList):
   if n == 1:
     return sum
   # many vertexes no edges
-  if n > 1 and len(adList) == 0:
+  if n > 1 and m == 0:
     return MANY_COMPONENTS
 
-  if len(adList) > 0:
-    v = next(iter(adList))
+  if m > 0:
+    v = 1
     # -w, w, v, u
     edges = [[0, 0, v, v]]
     while len(edges) > 0:  # O(N)
@@ -105,4 +105,4 @@ def solution(n,adList):
   else:
     return sum
 
-print(solution(n, adList))
+print(solution(n, adList, m))
